@@ -43,4 +43,18 @@ More details can be found in my blog post: [here](https://0x2142.com/web-dashboa
 
 Example of the main dashboard page: 
 
-<img src=""></img>
+<p align="center">
+<img src="https://github.com/0x2142/switchport-web-dashboard/blob/main/screenshots/dashboard-example.PNG?raw=true"></img>
+</p>
+
+Example of the switch detail page: 
+
+<p align="center">
+<img src="https://github.com/0x2142/switchport-web-dashboard/blob/main/screenshots/dashboard-detail-example.PNG"></img>
+</p>
+
+Example of the network-wide aggregate stats:
+
+<p align="center">
+<img src="https://github.com/0x2142/switchport-web-dashboard/blob/main/screenshots/dasboard-aggregate-example.PNG"></img>
+</p>
