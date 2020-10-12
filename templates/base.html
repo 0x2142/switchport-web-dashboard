@@ -1,0 +1,19 @@
+{%- extends "bootstrap/base.html" %}
+<head>
+   {% block styles %}
+   {{super()}}
+   <link rel="stylesheet"
+      href="{{url_for('static', filename='bootstrap.css')}}">
+   <link rel="icon" 
+      type="image/png" 
+      href="static/cli.png">
+   {% endblock %}
+   {% block title %}
+   {% if title %}
+      {{ title }}
+   {% else %}
+      Switch Port Utilization
+   {% endif %}
+   {% endblock %}
+   {% include 'nav.html' %}
+</head>

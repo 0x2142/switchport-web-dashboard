@@ -1,0 +1,92 @@
+{%- extends "base.html" %}
+<body>
+   {% block content %}
+   <div class="container">
+      <div class="col-lg-12">
+         <div class="page-header">
+            <h1>Switch Detail<small class="text-muted"> for {{ switch.name }} </small></h1>
+         </div>
+      </div>
+   </div>
+   <div class="container">
+      <div class="jumbotron">
+         <ul class="nav nav-tabs">
+            <li class="nav-item">
+               <a class="nav-link active" data-toggle="tab" href="#quickstats">Quick Stats</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" data-toggle="tab" href="#portdetail">Port Detail</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" data-toggle="tab" href="#rawoutput">Raw Output</a>
+            </li>
+         </ul>
+         <div id="myTabContent" class="tab-content">
+            <div class="tab-pane active" id="quickstats">
+               <br>
+               <p>Model: {{ switch.model}}</p>
+               <p>Serial Number: {{ switch.serial }}</p>
+               <p>Software Version: {{switch.swver }}</p>
+               <p>Management IP: {{switch.ip }}</p>
+               {% if switch.check == 1 %}
+               <p>Last Check Status: Success</p>
+               {% else %}
+               <p>Last Check Status: Failed</p>
+               {% endif %}
+               <br>
+               <p>Current Port Utilization: {{ switch.capacity }}%</p>
+               <br>
+               <br>
+            </div>
+            <div class="tab-pane" id="portdetail">
+               <div class="row">
+                  <div class="col-lg-6">
+                     <br>
+                     <p>Total ports on switch: {{ switch.total }}</p>
+                     <p>Ports in UP state: {{ switch.up }}</p>
+                     <p>Ports in DOWN state: {{ switch.down }}</p>
+                     <p>Ports in DISABLED state: {{ switch.disabled }}</p>
+                  </div>
+                  <div class="col-lg-6">
+                     <br>
+                     {% if switch.int10m %}
+                     <p>Total Ports operating at 10M: {{ switch.int10m }}</p>
+                     {% endif %}
+                     {% if switch.int100m %}
+                     <p>Total Ports operating at 100M: {{ switch.int100m }}</p>
+                     {% endif %}
+                     {% if switch.int1g %}
+                     <p>Total Ports operating at 1G: {{ switch.int1g }}</p>
+                     {% endif %}
+                     {% if switch.int10g %}
+                     <p>Total Ports operating at 10G: {{ switch.int10g }}</p>
+                     {% endif %}
+                     {% if switch.int25g %}
+                     <p>Total Ports operating at 25G: {{ switch.int25g }}</p>
+                     {% endif %}
+                     {% if switch.int40g %}
+                     <p>Total Ports operating at 40G: {{ switch.int40g }}</p>
+                     {% endif %}
+                     {% if switch.int100g %}
+                     <p>Total Ports operating at 100G: {{ switch.int100g }}</p>
+                     {% endif %}
+                     <p></p>
+                     <p>Copper Ports: {{ switch.copper }}</p>
+                     <p>SFP-based Ports: {{ switch.sfp }}</p>
+                     <p>Virtual Ports: {{ switch.virtual }}</p>
+                  </div>
+               </div>
+            </div>
+            <div class="tab-pane" id="rawoutput">
+               <code>
+               <br>
+               {% for line in raw_data %}
+               {{ line }}<br>
+               {% endfor %}
+               </code>
+            </div>
+         </div>
+      </div>
+   </div>
+   {% endblock %}
+</body>

@@ -1,0 +1,11 @@
+Devices:
+  iosxe-test-01:
+    type: ios-xe
+    address: 192.168.1.1
+    username: admin
+    password: admin
+  nxos-test-01:
+    type: nx-os
+    address: 172.16.1.1
+    username: admin
+    password: admin

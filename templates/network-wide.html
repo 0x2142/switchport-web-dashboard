@@ -1,0 +1,101 @@
+{%- extends "base.html" %}
+<body>
+   {% block content %}
+   <div class="container">
+      <div class="col-lg-12">
+         <div class="page-header">
+            <h1>Network-Wide Statistics</small></h1>
+         </div>
+      </div>
+   </div>
+   <div class="container">
+      <div class="jumbotron">
+         <div class="row">
+            <div class="col-lg-4">
+               <div class="card border-secondary mb-3" style="max-width: 40rem;">
+                  <div class="card-header">Total Ports</div>
+                  <div class="card-body">
+                     <h4 class="card-title"></h4>
+                     <p class="card-text">Total Ports: {{ network.total }}</p>
+                  </div>
+               </div>
+            </div>
+            <div class="col-lg-4">
+               <div class="card border-secondary mb-3" style="max-width: 40rem;">
+                  <div class="card-header">Operational Stats</div>
+                  <div class="card-body">
+                     <h4 class="card-title"></h4>
+                     <p class="card-text">
+                        All UP Ports: {{ network.up }} <br>
+                        All DOWN Ports: {{ network.down }} <br>
+                        All DISABLED Ports: {{ network.disabled }} 
+                     </p>
+                  </div>
+               </div>
+            </div>
+            <div class="col-lg-4">
+               <div class="card border-secondary mb-3" style="max-width: 40rem;">
+                  <div class="card-header">Operational Speeds</div>
+                  <div class="card-body">
+                     <h4 class="card-title"></h4>
+                     <p class="card-text">
+                        All Ports at 10M: {{ network.int10m }} <br>
+                        All Ports at 100M: {{ network.int100m }} <br>
+                        All Ports at 1G: {{ network.int1g }} <br>
+                        All Ports at 10G: {{ network.int10g }} <br>
+                        All Ports at 25G: {{ network.int25g }} <br>
+                        All Ports at 40G: {{ network.int40g }} <br>
+                        All Ports at 100G: {{ network.int100g }}
+                     </p>
+                     </p>
+                     </p>
+                     </p>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-lg-4">
+               <div class="card border-secondary mb-3" style="max-width: 40rem;">
+                  <div class="card-header">Port Media</div>
+                  <div class="card-body">
+                     <h4 class="card-title"></h4>
+                     <p class="card-text">
+                        Total Copper Ports: {{ network.copper }} <br>
+                        Total SFP Ports: {{ network.sfp }} <br>
+                        Total Virtual Ports: {{ network.virtual }}
+                     </p>
+                  </div>
+               </div>
+            </div>
+            <div class="col-lg-4">
+               <div class="card border-secondary mb-3" style="max-width: 40rem;">
+                  <div class="card-header">Hardware Models</div>
+                  <div class="card-body">
+                     <h4 class="card-title">Top 5</h4>
+                     <p class="card-text">
+                        {% for model, count in network.models %}
+                        {{ model }}: {{ count }} <br>
+                        {% endfor %} 
+                     </p>
+                  </div>
+               </div>
+            </div>
+            <div class="col-lg-4">
+               <div class="card border-secondary mb-3" style="max-width: 40rem;">
+                  <div class="card-header">Software Versions</div>
+                  <div class="card-body">
+                     <h4 class="card-title">Top 5</h4>
+                     <p class="card-text">
+                        {% for swver, count in network.swvers %}
+                        {{ swver }}: {{ count }} <br>
+                        {% endfor %} 
+                     </p>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   {% endblock %}
+</body>
