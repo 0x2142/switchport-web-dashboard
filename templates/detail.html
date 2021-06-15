@@ -76,6 +76,42 @@
                      <p>Virtual Ports: {{ switch.virtual }}</p>
                   </div>
                </div>
+               <div class="row">
+                  <div class="form-inline">
+                     <div class="page-header">
+                        <h3>Detailed Port Information:</h3>
+                     </div>
+                     <table class="table table-hover">
+                        <thead>
+                           <tr>
+                              <th scope="col">Interface Name</th>
+                              <th scope="col">Description</th>
+                              <th scope="col">MAC Address</th>
+                              <th scope="col">State</th>
+                              <th scope="col">Speed</th>
+                              <th scope="col">Duplex</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           {% for interface in interfaces %}
+                           <tr>
+                              <td>{{ interface.name }}</td>
+                              <td>{{ interface.description }}</td>
+                              <td>{{ interface.physical_address }}</td>
+                              <td>
+                                 {% if interface.oper_status == 'up' %}
+                                 <p class="text-success">Up</span>
+                                 {% else %}
+                                 <p class="text-danger">Down</span>
+                                 {% endif %}
+                              <td>{{ interface.oper_speed }}</td>
+                              <td>{{ interface.oper_duplex }}</td>
+                              </td>
+                           {% endfor %}
+                        </tbody>
+                  </table>
+                  </div>
+               </div>
             </div>
             <div class="tab-pane" id="rawoutput">
                <code>

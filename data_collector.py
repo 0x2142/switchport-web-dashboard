@@ -6,14 +6,15 @@ from scrapli.driver.core import IOSXEDriver, NXOSDriver
 import switchdb
 
 
+
 def loadDevices():
     """
     Load device inventory from config.yml
     """
     print("Loading devices from config file...")
-    with open("config.yml", 'r') as config:
+    with open("config.yml", "r") as config:
         devicelist = yaml.full_load(config)
-    return devicelist['Devices']
+    return devicelist["Devices"]
 
 
 def connectToDevice(deviceconfig):
@@ -22,19 +23,19 @@ def connectToDevice(deviceconfig):
     """
     print("Loading device configuration...")
     device = {}
-    device['host'] = deviceconfig['address']
-    device['auth_username'] = deviceconfig['username']
-    device['auth_password'] = deviceconfig['password']
-    device['auth_strict_key'] = False
-    device['timeout_socket'] = 10
-    device['timeout_ops'] = 10
+    device["host"] = deviceconfig["address"]
+    device["auth_username"] = deviceconfig["username"]
+    device["auth_password"] = deviceconfig["password"]
+    device["auth_strict_key"] = False
+    device["timeout_socket"] = 10
+    device["timeout_ops"] = 10
     try:
-        device['port'] = deviceconfig['port']
+        device["port"] = deviceconfig["port"]
     except KeyError:
         pass
-    if deviceconfig['type'] == 'ios-xe':
+    if deviceconfig["type"] == "ios-xe":
         conn = IOSXEDriver(**device)
-    elif deviceconfig['type'] == 'nx-os':
+    elif deviceconfig["type"] == "nx-os":
         conn = NXOSDriver(**device)
     try:
         print(f"Attempting connection to {device['host']}")
@@ -62,70 +63,79 @@ def getInterfaceInfo(device):
     # Parse raw CLI using Genie
     intdata = resp.genie_parse_output()
     interfaceStats = {
-        'total_port': 0,
-        'up_port': 0,
-        'down_port': 0,
-        'disabled_port': 0,
-        'intop10m': 0,
-        'intop100m': 0,
-        'intop1g': 0,
-        'intop10g': 0,
-        'intop25g': 0,
-        'intop40g': 0,
-        'intop100g': 0,
-        'intmedcop': 0,
-        'intmedsfp': 0,
-        'intmedvirtual': 0
+        "total_port": 0,
+        "up_port": 0,
+        "down_port": 0,
+        "disabled_port": 0,
+        "intop10m": 0,
+        "intop100m": 0,
+        "intop1g": 0,
+        "intop10g": 0,
+        "intop25g": 0,
+        "intop40g": 0,
+        "intop100g": 0,
+        "intmedcop": 0,
+        "intmedsfp": 0,
+        "intmedvirtual": 0,
     }
+    # Init dict for detailed interface operational stat collection
+    intDetailed = {}
     # Process each interface
     for iface in intdata:
         # Skip VLAN / PortChannel Interfaces
-        if 'Ethernet' not in iface:
-            print(f'found non-ethernet interface: {iface}')
+        if "Ethernet" not in iface:
+            print(f"found non-ethernet interface: {iface}")
             continue
-        if 'GigabitEthernet0/0' in iface:
-            print(f'found management interface: {iface}')
+        if "GigabitEthernet0/0" in iface:
+            print(f"found management interface: {iface}")
             continue
         print(f"Working on interface {iface}")
+        # Collect detailed interface stats (name, oper status, description, MAC)
+        intDetailed[iface] = {}
+        intDetailed[iface]["oper_status"] = intdata[iface]["oper_status"]
+        intDetailed[iface]["description"] = intdata[iface]["description"]
+        intDetailed[iface]["phys_addr"] = intdata[iface]["phys_address"]
+        intDetailed[iface]["oper_speed"] = intdata[iface]["port_speed"]
+        intDetailed[iface]["oper_duplex"] = intdata[iface]["duplex_mode"]
         # Count all Ethernet interfaces
-        interfaceStats['total_port'] += 1
+        interfaceStats["total_port"] += 1
         # Count admin-down interfaces
-        if not intdata[iface]['enabled']:
-            interfaceStats['disabled_port'] += 1
+        if not intdata[iface]["enabled"]:
+            interfaceStats["disabled_port"] += 1
         # Count 'not connected' interfaces
-        elif intdata[iface]['enabled'] and intdata[iface]['oper_status'] == 'down':
-            interfaceStats['down_port'] += 1
+        elif intdata[iface]["enabled"] and intdata[iface]["oper_status"] == "down":
+            interfaceStats["down_port"] += 1
         # Count up / connected interfaces - Then collect current speeds
-        elif intdata[iface]['enabled'] and intdata[iface]['oper_status'] == 'up':
-            interfaceStats['up_port'] += 1
-            speed = intdata[iface]['bandwidth']
+        elif intdata[iface]["enabled"] and intdata[iface]["oper_status"] == "up":
+            interfaceStats["up_port"] += 1
+            speed = intdata[iface]["bandwidth"]
             if speed == 10_000:
-                interfaceStats['intop10m'] += 1
+                interfaceStats["intop10m"] += 1
             if speed == 100_000:
-                interfaceStats['intop100m'] += 1
+                interfaceStats["intop100m"] += 1
             if speed == 1_000_000:
-                interfaceStats['intop1g'] += 1
+                interfaceStats["intop1g"] += 1
             if speed == 10_000_000:
-                interfaceStats['intop10g'] += 1
+                interfaceStats["intop10g"] += 1
             if speed == 25_000_000:
-                interfaceStats['intop25g'] += 1
+                interfaceStats["intop25g"] += 1
             if speed == 40_000_000:
-                interfaceStats['intop40g'] += 1
+                interfaceStats["intop40g"] += 1
             if speed == 100_000_000:
-                interfaceStats['intop100g'] += 1
+                interfaceStats["intop100g"] += 1
         # Count number of interfaces by media type
         try:
-            media = intdata[iface]['media_type']
-            if '1000BaseTX' in media:
-                interfaceStats['intmedcop'] += 1
-            elif 'Virtual' in media:
-                interfaceStats['intmedvirtual'] += 1
+            media = intdata[iface]["media_type"]
+            if "1000BaseTX" in media:
+                interfaceStats["intmedcop"] += 1
+            elif "Virtual" in media:
+                interfaceStats["intmedvirtual"] += 1
             else:
-                interfaceStats['intmedsfp'] += 1
+                interfaceStats["intmedsfp"] += 1
         except KeyError:
-            interfaceStats['intmedsfp'] += 1
+            interfaceStats["intmedsfp"] += 1
     # When complete - return int stats list
-    return interfaceStats
+    return interfaceStats, intDetailed
 
 
 def save_raw_output(data):
@@ -134,10 +144,10 @@ def save_raw_output(data):
     output is stored.
     """
     # Create local directory to store raw output
-    if not os.path.exists('raw_output'):
-        os.makedirs('raw_output')
+    if not os.path.exists("raw_output"):
+        os.makedirs("raw_output")
     # Dump port information to file
-    with open(f'raw_output/{system_serial}.txt', 'w') as a:
+    with open(f"raw_output/{system_serial}.txt", "w") as a:
         a.write(data.result)
 
 
@@ -150,11 +160,11 @@ def getSystemInfoXE(device):
     resp = device.send_command("show version")
     parsed = resp.genie_parse_output()
     sysinfo = {}
-    sysinfo['serial'] = parsed['version']['chassis_sn']
-    sysinfo['model'] = parsed['version']['chassis']
-    sysinfo['sw_ver'] = parsed['version']['version']
+    sysinfo["serial"] = parsed["version"]["chassis_sn"]
+    sysinfo["model"] = parsed["version"]["chassis"]
+    sysinfo["sw_ver"] = parsed["version"]["version"]
     global system_serial
-    system_serial = sysinfo['serial']
+    system_serial = sysinfo["serial"]
     return sysinfo
 
 
@@ -167,11 +177,11 @@ def getSystemInfoNX(device):
     resp = device.send_command("show version")
     parsed = resp.genie_parse_output()
     sysinfo = {}
-    sysinfo['serial'] = parsed['platform']['hardware']['processor_board_id']
-    sysinfo['model'] = parsed['platform']['hardware']['model']
-    sysinfo['sw_ver'] = parsed['platform']['software']['system_version']
+    sysinfo["serial"] = parsed["platform"]["hardware"]["processor_board_id"]
+    sysinfo["model"] = parsed["platform"]["hardware"]["model"]
+    sysinfo["sw_ver"] = parsed["platform"]["software"]["system_version"]
     global system_serial
-    system_serial = sysinfo['serial']
+    system_serial = sysinfo["serial"]
     return sysinfo
 
 
@@ -185,7 +195,7 @@ def addDeviceToDB(devicelist):
     # Compare between new config file - see what should be added/removed
     curswitches = swDB.getAllSummary()
     currentSwitches = [row[3] for row in curswitches]
-    newSwitches = [devicelist[switch]['address'] for switch in devicelist]
+    newSwitches = [devicelist[switch]["address"] for switch in devicelist]
     swRemove = set(currentSwitches).difference(newSwitches)
     swAdd = set(newSwitches).difference(currentSwitches)
     # If switches to remove, purge from the database
@@ -197,7 +207,7 @@ def addDeviceToDB(devicelist):
 
     print("Adding devices to DB...")
     for switch in devicelist:
-        switchIP = devicelist[switch]['address']
+        switchIP = devicelist[switch]["address"]
         if switchIP in swAdd:
             print(f"Adding switch ({switch} / {switchIP}) to DB...")
             swDB.addSwitch(str(switch), str(switchIP))
@@ -206,7 +216,7 @@ def addDeviceToDB(devicelist):
     swDB.close()
 
 
-def updateDB(device, ip, sysinfo, portinfo):
+def updateDB(device, ip, sysinfo, portinfo, detailedinfo):
     """
     Insert new system & port information
     into the database
@@ -216,6 +226,8 @@ def updateDB(device, ip, sysinfo, portinfo):
     swDB.updateSysInfo(device, ip, sysinfo)
     print(f"Updating port info for {device} in DB...")
     swDB.updatePorts(device, ip, portinfo)
+    print(f"Updating detailed port info for {device} in DB...")
+    swDB.updateInterfaceDetails(device, ip, sysinfo, detailedinfo)
     swDB.close()
 
 
@@ -250,7 +262,7 @@ def run():
     # Iterate through each device for processing
     for device in devicelist:
         dev = device
-        ip = devicelist[device]['address']
+        ip = devicelist[device]["address"]
         # Open device connection
         devcon = connectToDevice(devicelist[device])
         if devcon:
@@ -260,13 +272,14 @@ def run():
                     sysinfo = getSystemInfoXE(devcon)
                 if type(devcon) == NXOSDriver:
                     sysinfo = getSystemInfoNX(devcon)
-                portinfo = getInterfaceInfo(devcon)
+                portinfo, detailedinfo = getInterfaceInfo(devcon)
             except Exception as e:
-                print(f'ERROR: {e}')
+                print(f"ERROR: {e}")
                 updateCheckStatus(device, ip, False)
                 continue
             # Update database with new info
-            updateDB(dev, ip, sysinfo, portinfo)
+            updateDB(dev, ip, sysinfo, portinfo, detailedinfo)
+            # Update database with interface detail info
             # Update if check succeeeded
             updateCheckStatus(dev, ip, True)
         else:
@@ -276,5 +289,5 @@ def run():
     updateLastRun()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

@@ -56,5 +56,5 @@ Example of the switch detail page:
 Example of the network-wide aggregate stats:
 
 <p align="center">
-<img src="https://github.com/0x2142/switchport-web-dashboard/blob/main/screenshots/dasboard-aggregate-example.PNG"></img>
+<img src="https://github.com/0x2142/switchport-web-dashboard/blob/main/screenshots/dashboard-aggregate-example.PNG"></img>
 </p>
