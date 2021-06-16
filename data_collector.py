@@ -93,7 +93,10 @@ def getInterfaceInfo(device):
         # Collect detailed interface stats (name, oper status, description, MAC)
         intDetailed[iface] = {}
         intDetailed[iface]["oper_status"] = intdata[iface]["oper_status"]
-        intDetailed[iface]["description"] = intdata[iface]["description"]
+        try:
+            intDetailed[iface]["description"] = intdata[iface]["description"]
+        except:
+            intDetailed[iface]["description"] = "N/A"
         intDetailed[iface]["phys_addr"] = intdata[iface]["phys_address"]
         intDetailed[iface]["oper_speed"] = intdata[iface]["port_speed"]
         intDetailed[iface]["oper_duplex"] = intdata[iface]["duplex_mode"]
